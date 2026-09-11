@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ワーク1｜ゆとの本せどり便り</title>
+<style>
+  /* ===================================================================
+     ゆと ステップメール ワークページ #1
+     - スマホで開く前提。1枚のHTMLだけで完結（外部ファイルなし）
+     - 編集していい場所は下の <script> 内「ここを編集できます」ブロック
+     =================================================================== */
+  :root{
+    --bg:#fdf6ec; --card:#ffffff; --ink:#3b3a37; --ink-soft:#7a756c;
+    --green:#3fae74; --green-d:#2f9560; --coral:#ff7a59; --yellow:#ffd45e;
+    --soft:#eef7f0; --line:#eadfce;
+    --shadow:0 10px 24px rgba(120,100,60,.14);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(circle at 12% 8%, #fff3d6 0, transparent 42%),
+      radial-gradient(circle at 88% 92%, #e4f6e9 0, transparent 40%),
+      var(--bg);
+    color:var(--ink);
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Maru Gothic Pro",
+      "Quicksand","Rounded Mplus 1c","M PLUS Rounded 1c",
+      -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    line-height:1.75; letter-spacing:.01em;
+    min-height:100dvh; display:flex; align-items:flex-start; justify-content:center;
+    padding:22px 16px calc(28px + env(safe-area-inset-bottom));
+  }
+  .app{width:100%; max-width:460px}
+
+  /* 進捗バッジ */
+  .topbar{display:flex; align-items:center; gap:10px; margin:2px 4px 16px}
+  .badge{
+    background:var(--green); color:#fff; font-weight:700; font-size:13px;
+    padding:5px 12px; border-radius:999px; letter-spacing:.04em;
+  }
+  .topbar .dots{display:flex; gap:6px; margin-left:auto}
+  .dot{width:9px; height:9px; border-radius:50%; background:#e6dcc9}
+  .dot.on{background:var(--yellow)}
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:24px;
+    box-shadow:var(--shadow); padding:26px 22px 24px;
+  }
+  .screen{display:none; animation:pop .35s ease both}
+  .screen.active{display:block}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98)} to{opacity:1; transform:none}}
+
+  .sprout{
+    width:64px; height:64px; border-radius:50%; display:grid; place-items:center;
+    background:var(--soft); font-size:34px; margin:0 auto 12px;
+  }
+  h1{font-size:21px; margin:.2em 0 .35em; text-align:center; line-height:1.5}
+  .lead{font-size:14.5px; color:var(--ink-soft); text-align:center; margin:0 0 18px}
+
+  /* 状況カード */
+  .pick{display:grid; gap:12px; margin-top:6px}
+  .opt{
+    display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+    background:#fff; border:2px solid var(--line); border-radius:18px;
+    padding:14px 16px; font:inherit; color:inherit; cursor:pointer;
+    transition:transform .12s ease, border-color .12s ease, background .12s ease;
+  }
+  .opt:hover{border-color:#d9c8ab}
+  .opt:active{transform:scale(.98)}
+  .opt.sel{border-color:var(--green); background:var(--soft)}
+  .opt .emo{font-size:24px}
+  .opt .t{font-weight:700; font-size:15px}
+  .opt .d{display:block; font-weight:400; font-size:12.5px; color:var(--ink-soft)}
+
+  /* 記入 */
+  .q{font-size:18px; font-weight:700; text-align:center; margin:4px 0 4px}
+  .qhint{font-size:12.5px; color:var(--ink-soft); text-align:center; margin:0 0 14px}
+  textarea{
+    width:100%; min-height:120px; resize:vertical; font:inherit; color:inherit;
+    border:2px solid var(--line); border-radius:16px; padding:13px 14px;
+    background:#fffdf8; outline:none;
+  }
+  textarea:focus{border-color:var(--green)}
+  .count{font-size:12px; color:var(--ink-soft); text-align:right; margin:6px 2px 0}
+
+  .btn{
+    -webkit-appearance:none; appearance:none; border:none; font:inherit; cursor:pointer;
+    width:100%; margin-top:16px; padding:15px 18px; border-radius:16px;
+    font-weight:800; font-size:16px; color:#fff; background:var(--coral);
+    box-shadow:0 6px 0 #e05f3f; transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .btn:active{transform:translateY(4px); box-shadow:0 2px 0 #e05f3f}
+  .btn[disabled]{background:#d9cdb8; box-shadow:0 6px 0 #c4b79f; cursor:default}
+  .btn.ghost{background:#fff; color:var(--green-d); box-shadow:0 6px 0 var(--line)}
+  .btn.ghost:active{box-shadow:0 2px 0 var(--line)}
+
+  .back{display:block; margin:12px auto 0; background:none; border:none; font:inherit;
+    color:var(--ink-soft); font-size:13px; text-decoration:underline; cursor:pointer}
+
+  /* 完了画面 */
+  .stamp{
+    width:120px; height:120px; margin:6px auto 14px; border-radius:50%;
+    display:grid; place-items:center; text-align:center; font-weight:800;
+    color:#fff; background:radial-gradient(circle at 30% 25%, #57c088, var(--green-d));
+    box-shadow:0 12px 26px rgba(63,174,116,.4); transform:rotate(-8deg);
+    animation:stampin .5s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  .stamp span{font-size:13px; line-height:1.3}
+  .stamp b{display:block; font-size:22px; margin-top:2px}
+  @keyframes stampin{from{opacity:0; transform:rotate(-8deg) scale(1.7)} to{opacity:1; transform:rotate(-8deg) scale(1)}}
+
+  .comment{
+    background:var(--soft); border-radius:18px; padding:16px 16px 15px;
+    font-size:14.5px; margin-top:4px;
+  }
+  .comment .who{display:flex; align-items:center; gap:8px; font-weight:700; font-size:13px; margin-bottom:6px}
+  .comment .who .av{width:24px; height:24px; border-radius:50%; background:#fff; display:grid; place-items:center; font-size:15px}
+  .closing{font-size:13px; color:var(--ink-soft); text-align:center; margin:16px 0 0}
+
+  /* 紙吹雪 */
+  .confetti{position:fixed; inset:0; pointer-events:none; overflow:hidden}
+  .confetti i{position:absolute; top:-12px; width:9px; height:14px; border-radius:2px; opacity:.9;
+    animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(105dvh) rotate(540deg); opacity:.4}}
+
+  @media (prefers-reduced-motion:reduce){
+    .screen,.stamp{animation:none}
+    .confetti{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <span class="badge">ワーク 1</span>
+    <span style="font-size:12.5px;color:var(--ink-soft)">ゆとの本せどり便り</span>
+    <span class="dots" aria-hidden="true">
+      <i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i>
+    </span>
+  </div>
+
+  <div class="card">
+
+    <!-- 画面1：導入＋いまの状況 -->
+    <section class="screen active" id="s1">
+      <div class="sprout">🌱</div>
+      <h1 id="s1title">ようこそ！<br>さっそくワーク1です</h1>
+      <p class="lead">まず、いまのあなたに近いのはどれですか？<br>（タップで進みます）</p>
+      <div class="pick" id="pick"></div>
+    </section>
+
+    <!-- 画面2：記入 -->
+    <section class="screen" id="s2">
+      <div class="sprout">✏️</div>
+      <p class="q" id="qtext">あなたの目標を教えてください</p>
+      <p class="qhint" id="qhint">一言でOK。「まず1冊売る」でも「月3万」でも。</p>
+      <textarea id="answer" placeholder="ここに書いてください" maxlength="600"
+        aria-label="あなたの目標"></textarea>
+      <div class="count"><span id="cnum">0</span> 文字</div>
+      <button class="btn" id="ok" disabled>OK！ 提出する</button>
+      <button class="back" id="back">← もどる</button>
+    </section>
+
+    <!-- 画面3：完了＋コメント -->
+    <section class="screen" id="s3">
+      <div class="stamp"><span>ワーク1<b>かんりょう！</b></span></div>
+      <div class="comment">
+        <div class="who"><span class="av">🌱</span>ゆとより</div>
+        <p id="cmt" style="margin:0"></p>
+      </div>
+      <p class="closing">またあしたの夜21時、メールで会いましょう。<br>おつかれさまでした🌱</p>
+    </section>
+
+  </div>
+</div>
+
+<script>
+/* ===================================================================
+   ▼▼▼ ここを編集できます ▼▼▼
+   =================================================================== */
+
+// 1) 保存先（Google Apps Script のウェブアプリURL）。
+//    設定手順は「ワークページ_GAS設定手順.md」を見てください。
+//    デプロイ前は空のままでOK（記入内容は保存されず、コメントだけ出ます）。
+const GAS_URL = "";
+
+// 2) このワークの中身
+const WORK = {
+  id: "work1",
+  question: "あなたの目標を教えてください",
+  hint: "一言でOK。「まず1冊売る」でも「月3万」でも。"
+};
+
+// 3) いまの状況の選択肢（value はスプレッドシートに記録される名前）
+const STAGES = [
+  { value:"これから始める", emo:"🐣", title:"これから始める",   desc:"まだ1冊も仕入れてない" },
+  { value:"もう動いてる",   emo:"🏃", title:"もう動いてる",     desc:"すでに何冊か売ったことがある" },
+  { value:"気になってる",   emo:"👀", title:"気になってるだけ", desc:"やるかどうかは まだ迷い中" }
+];
+
+// 4) OKを押したあとに出る、ゆとからのコメント（状況ごとにランダムで1つ表示）
+const COMMENTS = {
+  "これから始める":[
+    "よし、目標が決まりましたね！ここがいちばん大事なスタート地点です。最初の1冊、いっしょに探しにいきましょう🌱",
+    "宣言してくれてありがとうございます。紙に書くのと同じで、言葉にした時点でもう半分進んでます。次のメールで“最初の一歩”を渡しますね",
+    "その目標、ちゃんと受け取りました。焦らなくて大丈夫、わたしも最初はゼロでした。すきま時間でコツコツいきましょう😊",
+    "はじめの一歩、えらい！本せどりは“続けた人”が勝つ地味なゲームです。まずは肩の力を抜いていきましょう🍅"
+  ],
+  "もう動いてる":[
+    "もう動いてるんですね、素晴らしい！その目標なら、あとは“見る棚を絞る”だけで景色が変わります。次のメール、たぶん刺さります",
+    "実践中の人からの宣言、うれしいです。今のやり方でうまくいってない部分は、この講座で1個ずつ潰していきましょう🤝",
+    "いいペースです。目標を言葉にできる人は伸びます。次回、“判断の基準”の話をするので楽しみにしててください",
+    "動きながら読んでくれるの、いちばん伸びるタイプです。その調子で、今週も1冊拾っていきましょう✨"
+  ],
+  "気になってる":[
+    "気になってる、で登録してくれてありがとうございます。その“ちょっと気になる”が入口です。まずは読むだけでもOK🌱",
+    "まだ始めてなくて大丈夫。5通読むころには“やってみようかな”に変わってるかもしれません",
+    "様子見、いいと思います。無理に始めなくていいので、次のメールだけ読んでみてください。合わなければ離れてOKです",
+    "その目標、メモしておきますね。気が向いたときに動き出せるように、地図だけ渡していきます😊"
+  ]
+};
+
+/* ===================================================================
+   ▲▲▲ 編集はここまで（下は仕組みなので触らなくてOK） ▲▲▲
+   =================================================================== */
+
+const $ = s => document.querySelector(s);
+let state = { stage:"" };
+
+// 画面1：状況カードを並べる
+const pick = $("#pick");
+STAGES.forEach(st => {
+  const b = document.createElement("button");
+  b.className = "opt";
+  b.innerHTML = `<span class="emo">${st.emo}</span>
+    <span><span class="t">${st.title}</span><span class="d">${st.desc}</span></span>`;
+  b.addEventListener("click", () => {
+    document.querySelectorAll(".opt").forEach(o=>o.classList.remove("sel"));
+    b.classList.add("sel");
+    state.stage = st.value;
+    setTimeout(goWrite, 240);
+  });
+  pick.appendChild(b);
+});
+
+// 画面2の中身を差し込み
+$("#qtext").textContent = WORK.question;
+$("#qhint").textContent = WORK.hint;
+
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  $("#"+id).classList.add("active");
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+function goWrite(){ show("s2"); setTimeout(()=>$("#answer").focus(), 300); }
+
+$("#back").addEventListener("click", ()=>show("s1"));
+
+const ta = $("#answer"), ok = $("#ok"), cnum = $("#cnum");
+ta.addEventListener("input", ()=>{
+  cnum.textContent = ta.value.trim().length;
+  ok.disabled = ta.value.trim().length === 0;
+});
+
+ok.addEventListener("click", async ()=>{
+  ok.disabled = true; ok.textContent = "送信中…";
+  const payload = {
+    ts: new Date().toISOString(),
+    work: WORK.id,
+    stage: state.stage,
+    answer: ta.value.trim()
+  };
+  // 保存（失敗しても読者の体験は止めない）
+  try{
+    if (GAS_URL) {
+      await fetch(GAS_URL, {
+        method:"POST", mode:"no-cors",
+        body: new URLSearchParams(payload)
+      });
+    }
+  }catch(e){ /* 通信できなくても続行 */ }
+  // バックアップとして端末にも残す
+  try{
+    const key = "yuto_work_backup";
+    const arr = JSON.parse(localStorage.getItem(key) || "[]");
+    arr.push(payload); localStorage.setItem(key, JSON.stringify(arr));
+  }catch(e){}
+
+  // コメントを1つ選ぶ
+  const pool = COMMENTS[state.stage] || COMMENTS["これから始める"];
+  $("#cmt").textContent = pool[Math.floor(Math.random()*pool.length)];
+  show("s3");
+  confetti();
+});
+
+// 紙吹雪
+function confetti(){
+  const wrap = document.createElement("div");
+  wrap.className = "confetti";
+  const cols = ["#ff7a59","#ffd45e","#3fae74","#7cc9ff","#ff9fb2"];
+  for (let i=0;i<34;i++){
+    const p = document.createElement("i");
+    p.style.left = Math.random()*100 + "%";
+    p.style.background = cols[i % cols.length];
+    p.style.animationDuration = (2.4 + Math.random()*1.8) + "s";
+    p.style.animationDelay = (Math.random()*0.5) + "s";
+    p.style.transform = `rotate(${Math.random()*360}deg)`;
+    wrap.appendChild(p);
+  }
+  document.body.appendChild(wrap);
+  setTimeout(()=>wrap.remove(), 5200);
+}
+</script>
+</body>
+</html>
