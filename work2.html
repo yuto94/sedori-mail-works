@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ワーク2｜ゆとの本せどり実践講座</title>
+<style>
+  /* ===================================================================
+     ゆと ステップメール ワークページ #2
+     - work1.htmlと同じ見た目。ステージ選択カードは無し（#1で聞いた分でOK）
+     - 編集していい場所は下の <script> 内「ここを編集できます」ブロック
+     =================================================================== */
+  :root{
+    --bg:#fdf6ec; --card:#ffffff; --ink:#3b3a37; --ink-soft:#7a756c;
+    --green:#3fae74; --green-d:#2f9560; --coral:#ff7a59; --yellow:#ffd45e;
+    --soft:#eef7f0; --line:#eadfce;
+    --shadow:0 10px 24px rgba(120,100,60,.14);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(circle at 12% 8%, #fff3d6 0, transparent 42%),
+      radial-gradient(circle at 88% 92%, #e4f6e9 0, transparent 40%),
+      var(--bg);
+    color:var(--ink);
+    font-family:"Hiragino Maru Gothic ProN","Hiragino Maru Gothic Pro",
+      "Quicksand","Rounded Mplus 1c","M PLUS Rounded 1c",
+      -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    line-height:1.75; letter-spacing:.01em;
+    min-height:100dvh; display:flex; align-items:flex-start; justify-content:center;
+    padding:22px 16px calc(28px + env(safe-area-inset-bottom));
+  }
+  .app{width:100%; max-width:460px}
+
+  .topbar{display:flex; align-items:center; gap:10px; margin:2px 4px 16px}
+  .badge{
+    background:var(--green); color:#fff; font-weight:700; font-size:13px;
+    padding:5px 12px; border-radius:999px; letter-spacing:.04em;
+  }
+  .topbar .dots{display:flex; gap:6px; margin-left:auto}
+  .dot{width:9px; height:9px; border-radius:50%; background:#e6dcc9}
+  .dot.on{background:var(--yellow)}
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:24px;
+    box-shadow:var(--shadow); padding:26px 22px 24px;
+  }
+  .screen{display:none; animation:pop .35s ease both}
+  .screen.active{display:block}
+  @keyframes pop{from{opacity:0; transform:translateY(12px) scale(.98)} to{opacity:1; transform:none}}
+
+  .sprout{
+    width:64px; height:64px; border-radius:50%; display:grid; place-items:center;
+    background:var(--soft); font-size:34px; margin:0 auto 12px;
+  }
+  h1{font-size:21px; margin:.2em 0 .35em; text-align:center; line-height:1.5}
+  .lead{font-size:14.5px; color:var(--ink-soft); text-align:center; margin:0 0 18px}
+
+  .q{font-size:18px; font-weight:700; text-align:center; margin:4px 0 4px; white-space:pre-line}
+  .qhint{font-size:12.5px; color:var(--ink-soft); text-align:center; margin:0 0 14px; white-space:pre-line}
+  textarea{
+    width:100%; min-height:120px; resize:vertical; font:inherit; color:inherit;
+    border:2px solid var(--line); border-radius:16px; padding:13px 14px;
+    background:#fffdf8; outline:none;
+  }
+  textarea:focus{border-color:var(--green)}
+  .count{font-size:12px; color:var(--ink-soft); text-align:right; margin:6px 2px 0}
+
+  .btn{
+    -webkit-appearance:none; appearance:none; border:none; font:inherit; cursor:pointer;
+    width:100%; margin-top:16px; padding:15px 18px; border-radius:16px;
+    font-weight:800; font-size:16px; color:#fff; background:var(--coral);
+    box-shadow:0 6px 0 #e05f3f; transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .btn:active{transform:translateY(4px); box-shadow:0 2px 0 #e05f3f}
+  .btn[disabled]{background:#d9cdb8; box-shadow:0 6px 0 #c4b79f; cursor:default}
+
+  .stamp{
+    width:120px; height:120px; margin:6px auto 14px; border-radius:50%;
+    display:grid; place-items:center; text-align:center; font-weight:800;
+    color:#fff; background:radial-gradient(circle at 30% 25%, #57c088, var(--green-d));
+    box-shadow:0 12px 26px rgba(63,174,116,.4); transform:rotate(-8deg);
+    animation:stampin .5s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  .stamp span{font-size:13px; line-height:1.3}
+  .stamp b{display:block; font-size:22px; margin-top:2px}
+  @keyframes stampin{from{opacity:0; transform:rotate(-8deg) scale(1.7)} to{opacity:1; transform:rotate(-8deg) scale(1)}}
+
+  .comment{
+    background:var(--soft); border-radius:18px; padding:16px 16px 15px;
+    font-size:14.5px; margin-top:4px;
+  }
+  .comment .who{display:flex; align-items:center; gap:8px; font-weight:700; font-size:13px; margin-bottom:6px}
+  .comment .who .av{width:24px; height:24px; border-radius:50%; background:#fff; display:grid; place-items:center; font-size:15px}
+  .closing{font-size:13px; color:var(--ink-soft); text-align:center; margin:16px 0 0}
+
+  .confetti{position:fixed; inset:0; pointer-events:none; overflow:hidden}
+  .confetti i{position:absolute; top:-12px; width:9px; height:14px; border-radius:2px; opacity:.9;
+    animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(105dvh) rotate(540deg); opacity:.4}}
+
+  @media (prefers-reduced-motion:reduce){
+    .screen,.stamp{animation:none}
+    .confetti{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <span class="badge">ワーク 2</span>
+    <span style="font-size:12.5px;color:var(--ink-soft)">ゆとの本せどり実践講座</span>
+    <span class="dots" aria-hidden="true">
+      <i class="dot"></i><i class="dot on"></i><i class="dot"></i><i class="dot"></i><i class="dot"></i>
+    </span>
+  </div>
+
+  <div class="card">
+
+    <!-- 画面1：記入 -->
+    <section class="screen active" id="s1">
+      <div class="sprout">📚</div>
+      <p class="q" id="qtext"></p>
+      <p class="qhint" id="qhint"></p>
+      <textarea id="answer" placeholder="ここに書いてください" maxlength="600"
+        aria-label="リサーチしたいジャンル"></textarea>
+      <div class="count"><span id="cnum">0</span> 文字</div>
+      <button class="btn" id="ok" disabled>OK！ 提出する</button>
+    </section>
+
+    <!-- 画面2：完了＋コメント -->
+    <section class="screen" id="s2">
+      <div class="stamp"><span>ワーク2<b>かんりょう！</b></span></div>
+      <div class="comment">
+        <div class="who"><span class="av">🌱</span>ゆとより</div>
+        <p id="cmt" style="margin:0"></p>
+      </div>
+      <p class="closing">またあしたの夜21時、メールで会いましょう。<br>おつかれさまでした🌱</p>
+    </section>
+
+  </div>
+</div>
+
+<script>
+/* ===================================================================
+   ▼▼▼ ここを編集できます ▼▼▼
+   =================================================================== */
+
+// 1) 保存先（work1.htmlと同じスプレッドシートに、ワーク名を分けて記録されます）
+const GAS_URL = "https://script.google.com/macros/s/AKfycbw99UX-4io-br_wombqaadMqfGbselpIF5axHxw2be5Qn_dEThzofvz8PJjECVntbs/exec";
+
+// 2) このワークの中身
+const WORK = {
+  id: "work2",
+  question: "あなたはどんなジャンルから\nリサーチしていこうと思いますか？",
+  hint: "マンガ・雑誌・文庫・小説・ゲーム攻略本…\n釣り、ゴルフ、占い、ビジネス書など、なんでもOK！"
+};
+
+// 3) OKを押したあとに出る、ゆとからのコメント（ランダムで1つ表示）
+const COMMENTS = [
+  "いいジャンルですね！まずはそこだけに絞って、次にブックオフに行ったとき棚をじっくり見てみてください🌱",
+  "好きなジャンルから始めるのが一番続きます。楽しみながらリサーチしてくださいね😊",
+  "そのジャンル、わたしも気になります！お互いリサーチ頑張りましょう🍅",
+  "興味のあるところから始めるの、正解です。焦らず一歩ずつでOKです✨",
+  "ジャンルが決まると、見る棚が決まって一気にラクになります。次のメールも楽しみにしててください🙆‍♀️"
+];
+
+/* ===================================================================
+   ▲▲▲ 編集はここまで（下は仕組みなので触らなくてOK） ▲▲▲
+   =================================================================== */
+
+const $ = s => document.querySelector(s);
+
+$("#qtext").textContent = WORK.question;
+$("#qhint").textContent = WORK.hint;
+
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  $("#"+id).classList.add("active");
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+const ta = $("#answer"), ok = $("#ok"), cnum = $("#cnum");
+ta.addEventListener("input", ()=>{
+  cnum.textContent = ta.value.trim().length;
+  ok.disabled = ta.value.trim().length === 0;
+});
+
+ok.addEventListener("click", async ()=>{
+  ok.disabled = true; ok.textContent = "送信中…";
+  const payload = {
+    ts: new Date().toISOString(),
+    work: WORK.id,
+    stage: "",
+    answer: ta.value.trim()
+  };
+  try{
+    if (GAS_URL) {
+      await fetch(GAS_URL, {
+        method:"POST", mode:"no-cors",
+        body: new URLSearchParams(payload)
+      });
+    }
+  }catch(e){ /* 通信できなくても続行 */ }
+  try{
+    const key = "yuto_work_backup";
+    const arr = JSON.parse(localStorage.getItem(key) || "[]");
+    arr.push(payload); localStorage.setItem(key, JSON.stringify(arr));
+  }catch(e){}
+
+  $("#cmt").textContent = COMMENTS[Math.floor(Math.random()*COMMENTS.length)];
+  show("s2");
+  confetti();
+});
+
+function confetti(){
+  const wrap = document.createElement("div");
+  wrap.className = "confetti";
+  const cols = ["#ff7a59","#ffd45e","#3fae74","#7cc9ff","#ff9fb2"];
+  for (let i=0;i<34;i++){
+    const p = document.createElement("i");
+    p.style.left = Math.random()*100 + "%";
+    p.style.background = cols[i % cols.length];
+    p.style.animationDuration = (2.4 + Math.random()*1.8) + "s";
+    p.style.animationDelay = (Math.random()*0.5) + "s";
+    p.style.transform = `rotate(${Math.random()*360}deg)`;
+    wrap.appendChild(p);
+  }
+  document.body.appendChild(wrap);
+  setTimeout(()=>wrap.remove(), 5200);
+}
+</script>
+</body>
+</html>
