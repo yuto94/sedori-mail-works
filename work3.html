@@ -76,12 +76,13 @@
   .btn:active{transform:translateY(4px); box-shadow:0 2px 0 #e05f3f}
   .btn[disabled]{background:#d9cdb8; box-shadow:0 6px 0 #c4b79f; cursor:default}
 
-  .skip{
-    -webkit-appearance:none; appearance:none; border:none; background:none; font:inherit;
-    display:block; width:100%; margin-top:14px; padding:8px; cursor:pointer;
-    font-size:13.5px; color:var(--ink-soft); text-decoration:underline; text-underline-offset:3px;
+  .skiplabel{font-size:13px; color:var(--ink-soft); text-align:center; margin:22px 0 0}
+  .btn.sub{
+    margin-top:8px; padding:11px 16px; font-size:14.5px; border-radius:14px;
+    background:var(--green); box-shadow:0 4px 0 var(--green-d);
   }
-  .skip[disabled]{opacity:.5; cursor:default}
+  .btn.sub:active{transform:translateY(3px); box-shadow:0 1px 0 var(--green-d)}
+  .btn.sub[disabled]{background:#d9cdb8; box-shadow:0 4px 0 #c4b79f}
 
   .stamp{
     width:120px; height:120px; margin:6px auto 14px; border-radius:50%;
@@ -135,7 +136,8 @@
         aria-label="調べた作品と中古の値段"></textarea>
       <div class="count"><span id="cnum">0</span> 文字</div>
       <button class="btn" id="ok" disabled>OK！ 提出する</button>
-      <button class="skip" id="skip" type="button">調べた内容は書かずに、「やったよ！」だけ提出する</button>
+      <p class="skiplabel">調べた内容は書かずに、「やったよ！」だけ提出する</p>
+      <button class="btn sub" id="skip" type="button">やったよ！</button>
     </section>
 
     <!-- 画面2：完了＋コメント -->
